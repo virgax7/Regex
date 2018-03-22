@@ -1,0 +1,36 @@
+What do you think the regex
+
+([^<>]*|<|>)*
+
+will match in 
+
+</head>asdfasdfasdf
+
+
+
+The answer is the first zero length string.
+
+The reason is because the [^<>]* inside ()* will succeed in matching the zero length string,
+and because the pcre engine took note that it's matched that, it won't try again.
+
+Now the inner regex [^<>]*|<|> might seem that it will now try to match
+< with < in </head> but that is not the case because one of its alternatives, namely [^<>]*
+has already been successful so it doesn't try the other alternatives.
+
+Now since the inner regex is wrapped inside ()* it will try to match </head>asdfasdfasdf
+again, with our engine currently still at the first character since our match was a zero length string.
+
+Here the [^<>]* will to match the zero length string succesfully again, which has been marked 
+as a match by the outermost * since one of its alternatives inside the (), namely that [^<>]*
+guy already matched it the first time around.
+
+What I'm saying is that the outermost * has already matched once on the zero length string
+matched by [^<>]* since what is returned to the outermost * is the zero length string.
+
+This same zero length string is matched again and returned to the outermost * and the regex engine says
+nope cannot do that otherwise it'd cause an infinite recursion and then since there is nothing after 
+the outermost * we have matched everything we can :P
+
+
+The reason why you should know this is for a trick that leverages this engine feature you can find in the
+directory Regex/pcre of this project. I'll name it very_efficient_tag_matching.txt
