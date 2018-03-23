@@ -11,10 +11,18 @@ This trick builds on ./gotchas/zero_length_match_gotcha1.txt
 regex is escaped with ` and string is escaped with '
 
 `<head>` matches the string literal '<head>'
-`([^<>]*|<|>)*<` leverages the pcre regex engine to fail fast and also gobble up any non tag looking string inside the target tag boundaries.
+`([^<>]*|<|>)*<` leverages the pcre regex engine to fail fast and also gobble up any non tag looking 
+string inside the target tag boundaries.
 
 For example the string 'ajsdfasdfasasdafs  123124 dfasdfasdifjasdifajsdf' would all be gobbled up by `[^<>]*`
 
-Now when you run across '<' the `[^<>]*` will actually match on the zero length string and the engine will try to match on it again which succeeds, thus quote on quote fails since the regex engine already marked that string as matched by the regex `[^<>]*`
+Now when you run across '<' the `[^<>]*` will actually match on the zero length string and the engine will try to match on it 
+again which succeeds, thus quote on quote fails since the regex engine already marked that string as
+matched by the regex `[^<>]*`
 
-Then the '<' will match the `<` inside `<\/head>` and since the string isn't '</head>' then backtrack once again since we haven't tried all alternatives as expressed in our regex. The next thing to try is the alternative `<` in `[^<>]*|<` which matches. This is a rather subtle trick you can leverage in the backtracking logic of the pcre regex engine. And thus subsequent string you are trying to match will only end your regex match if it is a legitimate '</head>' and the rest will gobble up and fail fast and backtrack efficiently(very shallow backtracking) by the trick we leveraged.
+Then the '<' will match the `<` inside `<\/head>` and since the string isn't '</head>' then backtrack once again
+since we haven't tried all alternatives as expressed in our regex. The next thing to try is the 
+alternative `<` in `[^<>]*|<` which matches. This is a rather subtle trick you can leverage 
+in the backtracking logic of the pcre regex engine. And thus subsequent string you are trying to match
+will only end your regex match if it is a legitimate '</head>' and the rest will gobble up and fail fast
+and backtrack efficiently(very shallow backtracking) by the trick we leveraged.
