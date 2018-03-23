@@ -1,0 +1,28 @@
+First the regex:
+-------------------------------------------------------------------------------
+\b((25[0-5]|2[0-4]\d|[01]?\d{1,2})\.){3}(25[0-5]|2[0-4]\d|[01]?\d{1,2})\b
+-------------------------------------------------------------------------------
+
+Explanation:
+boundary it with \b so that any word that directly preceeds means that
+this isn't valid
+if the octet starts with 25 then the next has to be 0-5
+if that fails and octet starts with 2, then the next has to be 0-4 
+an octet can be just a 0 or preceed with 0 or 1 and end with any two subsequent numbers
+they all must end in a . for the first three match as denoted by `.){3}`
+boundary it with \b so that any word that directly suffixes it means that
+this isn't valid
+
+Lastly, try the last match without the `\.`
+
+Test String:
+
+123.123.123.123
+001.00.000.000
+012.1.1.194
+225.255.234.333
+
+This shouldn't match below
+256.123.123.123
+123.256.123.123
+412ajsdifapsidfjapisdfjpasd
