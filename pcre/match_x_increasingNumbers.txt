@@ -1,0 +1,41 @@
+First the regex:
+-------------------------------------------------------------------------------
+(?=\b\d{5}\b)0?1?2?3?4?5?6?7?8?9?(?<=\d{5})
+-------------------------------------------------------------------------------
+
+Explanation:
+
+This is yet another pro regex trick a friend actually introduced to me, I cannot remember whom....
+Anyways its a lookahead and lookbehind thing.
+
+First lets get the easy stuff out of the way
+`0?1?2?3?4?5?6?7?8?9?` just matches literally any increasing set of numbers since after matching one the engine moves to the next and if next fails, backtracks and thus also moves the engine forward a character.
+
+Now lets get to the fun part.
+`(?=\b\d{5}\b)` is an assertion, it doesn't match anything, but can prohibit a match. It looks into the future by saying hey in the future if there is a match, then that match has to confirm to this starting from the first string. The whole string match has to confirm to the regex pattern
+
+The same logic applies for the lookbehind. It asserts from the end of the match that the previous guy must confirm to the regex pattern
+
+
+Test String:
+123
+
+234
+
+012
+
+589
+
+389
+
+
+below should not match
+
+111
+
+121
+
+987
+
+798
+
